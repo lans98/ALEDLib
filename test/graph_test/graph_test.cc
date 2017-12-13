@@ -6,13 +6,13 @@ class A {};
 
 class B {
 public:
-  bool operator==(const B& b); // Success
-//void operator==(const B& b); // Fail
-  bool operator!=(const B& b);
-  bool operator<(const B& b);
-  bool operator<=(const B& b);
-  bool operator>(const B& b);
-  bool operator>=(const B& b);
+  bool operator==(const B& b) const ; // Success
+//void operator==(const B& b) const ; // Fail
+  bool operator!=(const B& b) const;
+  bool operator<(const B& b) const;
+  bool operator<=(const B& b) const;
+  bool operator>(const B& b) const;
+  bool operator>=(const B& b) const;
 };
 
 int main() {
@@ -75,6 +75,8 @@ int main() {
   g2.print();
 
   aled::Graph<B, B, aled::DIRECTED> g3;
+  // Fails because graph needs to be undirected
+  // auto mst_g3 = g3.mst_kruskall();
 
   aled::Graph<char, int, aled::UNDIRECTED> g4;
   g4.add_vertex('a');
@@ -103,13 +105,20 @@ int main() {
   std::cout << "\nDFS g4:\n";
   g4.visit_dfs([](auto v){ std::cout << v << ' '; });
 
-  std::clock_t start = clock();
   std::cout << "\nDijkstra from 'a' in g4:\n";
+  std::clock_t start = clock();
   auto d = g4.dijkstra_from('a');
   std::clock_t end  = clock();
   std::cout << "time for dijkstra:" << 1000.0 * (end - start) / CLOCKS_PER_SEC << std::endl;
   for (auto& x : d)
     std::cout << x << std::endl;
+
+  std::cout << "MST for g4:\n";
+  start = clock();
+  auto g4_mst = g4.mst_kruskall();
+  end = clock();
+  g4_mst.print();
+  std::cout << "time for kruskall mst: " << 1000.0 * (end - start) / CLOCKS_PER_SEC << std::endl;
 
   
   aled::Graph<char, int, aled::UNDIRECTED> g5;
@@ -119,9 +128,10 @@ int main() {
 
   g5.add_edge('x', 'y', 2);
   g5.add_edge('y', 'z', 3);
-  
-  std::cout << "DFS for g5:\n" << std::endl;
-  g5.visit_dfs([](auto& v) { if (v.get_data() == 'z') std::cout << "cyclic" << std::endl; });
 
+  auto g5_mst = g5.mst_kruskall();
+  std::cout << "MST for g5:\n";
+  g5_mst.print();
+  
   return 0;
 }

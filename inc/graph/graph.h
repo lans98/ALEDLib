@@ -60,10 +60,6 @@ private:
     }
   };
 
-  friend std::ostream& operator<<(std::ostream& out, const EdgeSet& e) {
-    for (EdgeItr ii = e.begin(); ii != e.end(); ++ii) 
-      std::cout << "(" << *ii << ", " << ii->dest() << ")" ;
-  }
 
   using VertexSet = typename std::set<Vertex>;
   using VertexItr = typename std::set<Vertex>::iterator;
@@ -139,12 +135,12 @@ private:
       m_end(fe.m_end),
       m_data(fe.m_data) {}
 
-    bool operator==(const Edge& e) const { return m_data == e.m_data; }
-    bool operator!=(const Edge& e) const { return m_data != e.m_data; }
-    bool operator<(const Edge& e)  const { return m_data <  e.m_data; }
-    bool operator>(const Edge& e)  const { return m_data >  e.m_data; }
-    bool operator<=(const Edge& e) const { return m_data <= e.m_data; }
-    bool operator>=(const Edge& e) const { return m_data >= e.m_data; }
+    bool operator==(const FullyEdge& e) const { return m_data == e.m_data; }
+    bool operator!=(const FullyEdge& e) const { return m_data != e.m_data; }
+    bool operator<(const FullyEdge& e)  const { return m_data <  e.m_data; }
+    bool operator>(const FullyEdge& e)  const { return m_data >  e.m_data; }
+    bool operator<=(const FullyEdge& e) const { return m_data <= e.m_data; }
+    bool operator>=(const FullyEdge& e) const { return m_data >= e.m_data; }
 
     FullyEdge operator-(const FullyEdge& e) { FullyEdge t(*this); t.m_data -= e.m_data; return t; }
 
@@ -158,6 +154,12 @@ private:
     void set_tag(const EdgeTag& d) { return m_data = d; }
 
     operator Edge() { return Edge(m_end, m_data); }
+
+    friend std::ostream& operator<<(std::ostream& os, const FullyEdge& e) {
+      os << "(" << *e.m_beg  << ", " << e.m_data << ", " << *e.m_end << ")";
+      return os;
+    }
+
   };
 
   VertexSet m_g;
@@ -289,6 +291,9 @@ public:
     return true;
   }
 
+  auto get_vertex_itr(const VertexTag& a) { return m_g.find(Vertex(a)); }
+  auto get_vertex(const VertexTag& a) { return *get_vertex_itr(a);}
+
   EdgeTag const& get_tag_edge(const VertexTag& a, const VertexTag& b) {
     VertexItr ia = m_g.find(Vertex(a));
     VertexItr ib = m_g.find(Vertex(b));
@@ -360,9 +365,10 @@ public:
     }
   }
 
-  void visit_bfs(std::function<void (const Vertex&)> visit_func) {
+
+  void visit_bfs(const std::function<void (const Vertex&)>& visit_func, VertexItr beg) {
     std::queue<VertexItr> queue;
-    queue.push(m_g.begin());
+    queue.push(beg);
 
     VertexItr tmp;
     while (!queue.empty()) {
@@ -382,9 +388,11 @@ public:
     reset_marks();
   }
 
-  void visit_dfs(std::function<void (const Vertex&)> visit_func) {
+  void visit_bfs(const std::function<void (const Vertex&)>& visit_func) { visit_bfs(visit_func, m_g.begin()); }
+
+  void visit_dfs(const std::function<void (const Vertex&)>& visit_func, VertexItr beg) {
     std::stack<VertexItr> stack;
-    stack.push(m_g.begin());
+    stack.push(beg);
 
     VertexItr tmp;
     while (!stack.empty()) {
@@ -403,6 +411,8 @@ public:
 
     reset_marks();
   }
+  
+  void visit_dfs(const std::function<void (const Vertex&)>& visit_func) { visit_dfs(visit_func, m_g.begin()); }
 
   bool existing_way(const VertexTag& a, const VertexTag& b) {
     VertexItr ia = m_g.find(Vertex(a));
@@ -414,11 +424,14 @@ public:
     if (a == m_g.end() || b == m_g.end())
       throw std::runtime_error("One (or both) of the given vertex doesn't exist");
 
-    if constexpr (type == DIRECTED) {
+    auto eb = a->edges().find(Edge(b));
+    if (eb != a->edges().end()) return true;
 
-    } else {
-      
-    }
+    try {
+      visit_dfs([&b](auto& v){ if (v == *b) throw std::exception(); }, a);
+    } catch (const std::exception& e) { return true; }
+    
+    return false;
   }
 
   EdgeSet dijkstra_from(const VertexTag& a) {
@@ -428,7 +441,6 @@ public:
       is_fully_comparable<EdgeTag>::value ,
       "Dijkstra only works for arithmetic type or pseudoscalar (fully comparables) EdgeTags."
     );
-
 
     VertexItr origin = m_g.find(Vertex(a));
     if (origin == m_g.end()) throw std::runtime_error("Vertex wasn\'t found");
@@ -480,21 +492,29 @@ public:
   Graph<VertexTag, EdgeTag, UNDIRECTED> mst_kruskall() {
     static_assert(type == UNDIRECTED, "Graph needs to be aled::UNDIRECTED to obtain MST");
 
-    MinFiboHeap<FullyEdge> heap;
+    std::vector<FullyEdge> heap;
     fill_kruskall_heap(heap);
 
     Graph<VertexTag, EdgeTag, UNDIRECTED> mst;
 
-    FullyEdge min;
-    while (mst.no_vertexes() < m_no_vertexes) {
-      std::pop_heap(heap.begin(), heap.end());
-      min = heap.getMin(); heap.removeTop();
+    //std::cout << "Full heap\n";
+    //for (auto& x : heap)
+      //std::cout << x << ' ';
+    //std::cout << '\n';
 
-      if (!mst.cycle_with(min)) {
-        auto b = mst.add_vertex(min.beg());
-        auto e = mst.add_vertex(min.end());
-        mst.add_edge(b->first, e->first, min.get_tag());
-      }
+    FullyEdge min_edge;
+    while (mst.no_edges() + 1 < m_no_vertexes && !heap.empty()) {
+      std::pop_heap(heap.begin(), heap.end(), std::greater<FullyEdge>());
+      min_edge = heap.back(); heap.pop_back();
+
+      //std::cout << "evaluating: " << min_edge << ' ';
+
+      if (!mst.cycle_with(min_edge)) {
+        //std::cout << "not forms cycle\n";
+        auto b = mst.add_vertex(min_edge.beg().get_data());
+        auto e = mst.add_vertex(min_edge.end().get_data());
+        mst.add_edge(std::get<0>(b), std::get<0>(e), min_edge.get_tag());
+      } else { std::cout << '\n'; }
     }
 
     return mst;
@@ -513,32 +533,27 @@ private:
   bool cycle_with(const FullyEdge& e) {
     if (m_g.empty()) return false;
 
-    // f for first, s for second
-    Vertex f = e.beg();
-    Vertex s = e.end();
-
-    if constexpr (type == DIRECTED) {
-
-    } else {
-
-    }
-
-    // TODO: End function
+    try {
+      return existing_way(e.end().get_data(), e.beg().get_data());
+    } catch (const std::exception& e) { return false; }
   }
 
-  void fill_kruskall_heap(MinFiboHeap<FullyEdge>& heap) {
+  void fill_kruskall_heap(std::vector<FullyEdge>& heap) {
     static_assert(type == UNDIRECTED, "Graph needs to be aled::UNDIRECTED to obtain MST");
 
+    heap.reserve(m_no_edges/2);
     for (VertexItr v = m_g.begin(); v != m_g.end(); ++v) {
       for (EdgeItr e = v->edges().begin(); e != v->edges().end(); ++e) {
         if (e->vertex().marked()) continue;
-        heap.add(FullyEdge(v, e->vertex_itr(), e->get_tag()));
-      } 
+        heap.push_back(FullyEdge(v, e->vertex_itr(), e->get_tag()));
+      }
 
       v->mark();
     }
 
     reset_marks();
+    std::make_heap(heap.begin(), heap.end(), std::greater<FullyEdge>());
+
   }
 
   Edge get_min_dijkstra(std::vector<EdgeItr>& h) {
