@@ -12,6 +12,7 @@
 
 #include "sfinae.h"
 #include "heaps/min_fibo_heap.h"
+#include "graphviz_tools/gvtools.h"
 
 namespace aled {
 
@@ -545,6 +546,11 @@ public:
 
     reset_marks();
     return mst;
+  }
+
+  void draw_it(const std::string& filename) {
+    if (m_g.empty()) return;
+
   }
 
 private:
