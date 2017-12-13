@@ -103,6 +103,11 @@ private:
       bool operator()(const EdgeItr& a, const EdgeItr& b) { return a->get_tag() < b->get_tag(); }
     };
 
+    struct taggreater {
+      bool operator()(const Edge& a, const Edge& b) { return a.m_data > b.m_data; }
+      bool operator()(const EdgeItr& a, const EdgeItr& b) { return a->get_tag() > b->get_tag(); }
+    };
+
     struct tagequal {
       bool operator()(const Edge& a, const Edge& b) { return a.m_data == b.m_data; }
       bool operator()(const EdgeItr& a, const EdgeItr& b) { return a->get_tag() == b->get_tag(); }
@@ -431,39 +436,39 @@ public:
     EdgeSet distances(origin->edges());
     origin->mark();
 
-    MinFiboHeap<EdgeItr,
-      typename Edge::tagless,
-      typename Edge::tagequal,
-      typename Edge::tagminus> heap;
-
+    std::vector<EdgeItr> heap;
+    heap.reserve(m_no_vertexes - 1);
     for (auto ii = distances.begin(); ii != distances.end(); ++ii)
-      heap.add(ii);
-      
+      heap.push_back(ii);
 
-    Edge    min;
+    Edge    min_edge;
     EdgeItr from_min;
     EdgeItr tmp;
 
     std::size_t used = 1;
 
     while (used < m_g.size()) {
-      try { min = get_min_dijkstra(heap); } 
+      try { min_edge = get_min_dijkstra(heap); } 
       catch (const std::exception& e) { break; }
 
-      min.vertex().mark(); ++used;
+      min_edge.vertex().mark(); 
+      ++used;
 
       for (VertexItr ii = m_g.begin(); ii != m_g.end(); ++ii) {
         if (ii->marked()) continue;
 
-        from_min = min.vertex().edges().find(Edge(ii));
+        from_min = min_edge.vertex().edges().find(Edge(ii));
 
-        if (from_min != min.vertex().edges().end()) {
+        if (from_min != min_edge.vertex().edges().end()) {
           tmp = distances.find(Edge(ii));
 
-          if (tmp != distances.end()) 
-            tmp->set_tag(std::min(tmp->get_tag(), min.get_tag() + from_min->get_tag())); 
-          else 
-            distances.emplace(from_min->vertex_itr(), min.get_tag() + from_min->get_tag());
+          if (tmp != distances.end()) {
+            tmp->set_tag(std::min(tmp->get_tag(), min_edge.get_tag() + from_min->get_tag())); 
+            // heap automatically updates because it saves iterators
+          } else {
+            auto r = distances.emplace(from_min->vertex_itr(), min_edge.get_tag() + from_min->get_tag());
+            heap.push_back(std::get<0>(r));
+          }
         } 
       }
     }
@@ -536,33 +541,15 @@ private:
     reset_marks();
   }
 
-  Edge get_min_dijkstra(const EdgeSet& d) {
-    MinFiboHeap<Edge, 
-      typename Edge::tagless, 
-      typename Edge::tagequal, 
-      typename Edge::tagminus> heap;
+  Edge get_min_dijkstra(std::vector<EdgeItr>& h) {
+    if (h.empty()) throw std::logic_error("No more ways");
 
-    for (auto ii = d.begin(); ii != d.end(); ++ii)
-      heap.add(*ii);
-
-    Edge temp;
-    while (!heap.empty()) {
-      temp = heap.getMin();
-             heap.removeTop();
-      if (!temp.vertex().marked()) return temp;
-    }
-
-    throw std::logic_error("No more ways");
-  }
-
-  Edge get_min_dijkstra(MinFiboHeap<EdgeItr, typename Edge::tagless, typename Edge::tagequal, typename Edge::tagminus>& heap) {
-    if (heap.empty()) throw std::logic_error("No more ways");
-
-    Edge temp;
-    temp = heap.getMin();
-           heap.removeTop();
-
-    return temp;
+    std::make_heap(h.begin(), h.end(), typename Edge::taggreater());
+    
+    EdgeItr temp;
+    std::pop_heap(h.begin(), h.end(), typename Edge::taggreater());
+    temp = h.back(); h.pop_back();
+    return *temp;
   }
 
   void reset_marks() {
