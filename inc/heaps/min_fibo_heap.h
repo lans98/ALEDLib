@@ -132,6 +132,19 @@ public:
     return (*m_min)->data; 
   }
 
+  void updateMin() {
+    if (m_roots.size() == 1) return;
+
+    NodeIterator ii = m_roots.begin();
+    m_min           = ii;
+
+    for (; ii != m_roots.end(); ++ii) {
+      if (comp((*ii)->data, (*m_min)->data))
+        m_min = ii;
+    }
+  }
+
+
   void sort() final { throw std::runtime_error("Can\'t be used to sort"); }
 
   void print(std::ostream& out = std::cout) const final {   }
@@ -313,15 +326,6 @@ private:
     }
   }
 
-  void updateMin() {
-    NodeIterator ii = m_roots.begin();
-    m_min           = ii;
-
-    for (; ii != m_roots.end(); ++ii) {
-      if (comp((*ii)->data, (*m_min)->data))
-        m_min = ii;
-    }
-  }
 
   Node* find(const Type& data, NodeIterator& pos) {
     if (m_roots.empty() || comp(data, (*m_min)->data))

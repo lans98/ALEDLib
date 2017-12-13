@@ -106,10 +106,22 @@ int main() {
   std::clock_t start = clock();
   std::cout << "\nDijkstra from 'a' in g4:\n";
   auto d = g4.dijkstra_from('a');
-  for (auto& x : d)
-    std::cout << x << std::endl;
   std::clock_t end  = clock();
   std::cout << "time for dijkstra:" << 1000.0 * (end - start) / CLOCKS_PER_SEC << std::endl;
+  for (auto& x : d)
+    std::cout << x << std::endl;
+
+  
+  aled::Graph<char, int, aled::UNDIRECTED> g5;
+  g5.add_vertex('x');
+  g5.add_vertex('y');
+  g5.add_vertex('z');
+
+  g5.add_edge('x', 'y', 2);
+  g5.add_edge('y', 'z', 3);
+  
+  std::cout << "DFS for g5:\n" << std::endl;
+  g5.visit_dfs([](auto& v) { if (v.get_data() == 'z') std::cout << "cyclic" << std::endl; });
 
   return 0;
 }

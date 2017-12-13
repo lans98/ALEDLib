@@ -52,6 +52,8 @@ private:
     bool marked() const { return m_mark; }
     EdgeSet& edges() const { return m_edges; }
 
+    const VertexTag& get_data() const { return m_data; }
+
     friend std::ostream& operator<<(std::ostream& os, const Vertex& v) {
       os << "[" << v.m_data << "]";
       return os;
