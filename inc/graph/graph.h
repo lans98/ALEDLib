@@ -480,6 +480,7 @@ public:
           } else {
             auto r = distances.emplace(from_min->vertex_itr(), min_edge.get_tag() + from_min->get_tag());
             heap.push_back(std::get<0>(r));
+            std::push_heap(heap.begin(), heap.end(), typename Edge::taggreater());
           }
         } 
       }
@@ -497,24 +498,16 @@ public:
 
     Graph<VertexTag, EdgeTag, UNDIRECTED> mst;
 
-    //std::cout << "Full heap\n";
-    //for (auto& x : heap)
-      //std::cout << x << ' ';
-    //std::cout << '\n';
-
     FullyEdge min_edge;
     while (mst.no_edges() + 1 < m_no_vertexes && !heap.empty()) {
       std::pop_heap(heap.begin(), heap.end(), std::greater<FullyEdge>());
       min_edge = heap.back(); heap.pop_back();
 
-      //std::cout << "evaluating: " << min_edge << ' ';
-
       if (!mst.cycle_with(min_edge)) {
-        //std::cout << "not forms cycle\n";
         auto b = mst.add_vertex(min_edge.beg().get_data());
         auto e = mst.add_vertex(min_edge.end().get_data());
         mst.add_edge(std::get<0>(b), std::get<0>(e), min_edge.get_tag());
-      } else { std::cout << '\n'; }
+      } 
     }
 
     return mst;
@@ -523,8 +516,34 @@ public:
   Graph<VertexTag, EdgeTag, UNDIRECTED> mst_prim() {
     static_assert(type == UNDIRECTED, "Graph needs to be aled::UNDIRECTED to obtain MST");
 
+    std::vector<FullyEdge> heap;
+    heap.reserve(m_no_edges/2);
+
+    auto beg = m_g.begin();
+    for (auto ii = beg->edges().begin(); ii != beg->edges().end(); ++ii) {
+      if (ii->vertex().marked()) continue;
+      heap.push_back(FullyEdge(beg, ii->vertex_itr(), ii->get_tag()));
+    }
+    beg->mark();
+
+
     Graph<VertexTag, EdgeTag, UNDIRECTED> mst;
 
+    FullyEdge min_edge;
+    while (mst.no_edges() + 1 < m_no_vertexes && !heap.empty()) {
+      std::pop_heap(heap.begin(), heap.end(), std::greater<FullyEdge>());
+      min_edge = heap.back(); heap.pop_back();
+
+      if (!mst.cycle_with(min_edge)) {
+        auto b = mst.add_vertex(min_edge.beg().get_data());
+        auto e = mst.add_vertex(min_edge.end().get_data());
+        mst.add_edge(std::get<0>(b), std::get<0>(e), min_edge.get_tag());
+      }
+
+      fill_prim_heap(heap, min_edge.end_itr());
+    }
+
+    reset_marks();
     return mst;
   }
 
@@ -553,8 +572,17 @@ private:
 
     reset_marks();
     std::make_heap(heap.begin(), heap.end(), std::greater<FullyEdge>());
-
   }
+
+  void fill_prim_heap(std::vector<FullyEdge>& heap, VertexItr v) {
+    for (auto ii = v->edges().begin(); ii != v->edges().end(); ++ii) {
+      if (ii->vertex().marked()) continue;
+      heap.push_back(FullyEdge(v, ii->vertex_itr(), ii->get_tag()));
+      std::push_heap(heap.begin(), heap.end(), std::greater<FullyEdge>());
+    }
+    v->mark();
+  }
+
 
   Edge get_min_dijkstra(std::vector<EdgeItr>& h) {
     if (h.empty()) throw std::logic_error("No more ways");

@@ -113,12 +113,19 @@ int main() {
   for (auto& x : d)
     std::cout << x << std::endl;
 
-  std::cout << "MST for g4:\n";
+  std::cout << "MST kruskall for g4:\n";
   start = clock();
   auto g4_mst = g4.mst_kruskall();
   end = clock();
   g4_mst.print();
   std::cout << "time for kruskall mst: " << 1000.0 * (end - start) / CLOCKS_PER_SEC << std::endl;
+
+  std::cout << "MST prim for g4:\n";
+  start = clock();
+  auto g4_mst2 = g4.mst_prim();
+  end = clock();
+  g4_mst2.print();
+  std::cout << "time for prim mst: " << 1000.0 * (end - start) / CLOCKS_PER_SEC << std::endl;
 
   
   aled::Graph<char, int, aled::UNDIRECTED> g5;
