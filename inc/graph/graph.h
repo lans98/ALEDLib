@@ -550,6 +550,7 @@ public:
 
   std::vector<Graph<VertexTag, EdgeTag, type>> scc() {
 
+    std::vector<Graph<VertexTag, EdgeTag, type>> components;
   }
 
   void draw_it(const std::string& filename) {
