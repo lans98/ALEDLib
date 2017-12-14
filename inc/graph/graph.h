@@ -548,6 +548,10 @@ public:
     return mst;
   }
 
+  std::vector<Graph<VertexTag, EdgeTag, type>> scc() {
+
+  }
+
   void draw_it(const std::string& filename) {
     if (m_g.empty()) return;
 
