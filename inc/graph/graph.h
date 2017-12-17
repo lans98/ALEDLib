@@ -556,6 +556,13 @@ public:
   void draw_it(const std::string& filename) {
     if (m_g.empty()) return;
 
+    GVTool gv;
+    if constexpr (type == DIRECTED)
+      gv.createGraph("G", Agdirected);
+    else 
+      gv.createGraph("G", Agundirected);
+
+    gv.defAttr(AGNODE, "shape", "circle");
   }
 
 private:
