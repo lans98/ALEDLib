@@ -80,7 +80,7 @@ public:
     Node* tmp = new Node(data);
     m_roots.push_front(tmp);
 
-    if (m_roots.size() == 1 || comp(data, (*m_min)->data))
+    if (m_roots.size() == 1 || comp(data, (*m_min)->data) || equal(data, (*m_min)->data))
       m_min = m_roots.begin();
 
     m_size += 1;
@@ -103,6 +103,7 @@ public:
     m_roots.erase(m_min);
     merge();
 
+    // After merging O(logn)
     updateMin();
 
     m_size -= 1;
@@ -131,19 +132,6 @@ public:
 
     return (*m_min)->data; 
   }
-
-  void updateMin() {
-    if (m_roots.size() == 1) return;
-
-    NodeIterator ii = m_roots.begin();
-    m_min           = ii;
-
-    for (; ii != m_roots.end(); ++ii) {
-      if (comp((*ii)->data, (*m_min)->data))
-        m_min = ii;
-    }
-  }
-
 
   void sort() final { throw std::runtime_error("Can\'t be used to sort"); }
 
@@ -300,6 +288,22 @@ private:
       ii = std::next(ii);
     }
   }
+
+  void updateMin() {
+    if (m_roots.size() == 1) {
+      m_min = m_roots.begin();
+      return;
+    }
+
+    NodeIterator ii = m_roots.begin();
+    m_min           = ii;
+
+    for (; ii != m_roots.end(); ++ii) {
+      if (comp((*ii)->data, (*m_min)->data))
+        m_min = ii;
+    }
+  }
+
 
   void decreaseKey(Node* n) {
     if (!n) return;
