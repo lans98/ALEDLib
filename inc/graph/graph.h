@@ -116,6 +116,8 @@ private:
     };
   };
 
+  using DijkstraHeap = MinFiboHeap<Edge, typename Edge::tagless, typename Edge::tagequal, typename Edge::tagminus>;
+
   struct FullyEdge {
   private:
     VertexItr m_beg;
@@ -449,10 +451,9 @@ public:
     EdgeSet distances(origin->edges());
     origin->mark();
 
-    std::vector<EdgeItr> heap;
-    heap.reserve(m_no_vertexes - 1);
-    for (auto ii = distances.begin(); ii != distances.end(); ++ii)
-      heap.push_back(ii);
+    DijkstraHeap heap;
+    for (auto& x : distances)
+      heap.add(x);
 
     Edge    min_edge;
     EdgeItr from_min;
@@ -460,28 +461,26 @@ public:
 
     std::size_t used = 1;
 
-    while (used < m_g.size()) { 
-      try { min_edge = get_min_dijkstra(heap); } 
-      catch (const std::exception& e) { break; }
+    while (used < m_g.size() && !heap.empty()) { // O(n^2logn)
+      min_edge = get_min_dijkstra(heap);
 
       min_edge.vertex().mark(); 
       ++used;
 
-      for (VertexItr ii = m_g.begin(); ii != m_g.end(); ++ii) {
+      for (VertexItr ii = m_g.begin(); ii != m_g.end(); ++ii) { // O(nlogn)
         if (ii->marked()) continue;
 
         from_min = min_edge.vertex().edges().find(Edge(ii)); // O(logn)
 
         if (from_min != min_edge.vertex().edges().end()) {
-          tmp = distances.find(Edge(ii));
+          tmp = distances.find(Edge(ii)); // O(logn)
 
           if (tmp != distances.end()) {
             tmp->set_tag(std::min(tmp->get_tag(), min_edge.get_tag() + from_min->get_tag())); 
-            // heap automatically updates because it saves iterators
+            heap.add(*tmp); // O(1)
           } else {
-            auto r = distances.emplace(from_min->vertex_itr(), min_edge.get_tag() + from_min->get_tag());
-            heap.push_back(std::get<0>(r));
-            std::push_heap(heap.begin(), heap.end(), typename Edge::taggreater());
+            auto r = distances.emplace(from_min->vertex_itr(), min_edge.get_tag() + from_min->get_tag()); 
+            heap.add(*std::get<0>(r)); // O(1)
           }
         } 
       }
@@ -602,15 +601,17 @@ private:
   }
 
 
-  Edge get_min_dijkstra(std::vector<EdgeItr>& h) {
-    if (h.empty()) throw std::logic_error("No more ways");
+  Edge get_min_dijkstra(DijkstraHeap& h) {
+    if (h.empty()) throw std::logic_error("Heap is empty");
 
-    std::make_heap(h.begin(), h.end(), typename Edge::taggreater());
-    
-    EdgeItr temp;
-    std::pop_heap(h.begin(), h.end(), typename Edge::taggreater());
-    temp = h.back(); h.pop_back();
-    return *temp;
+    Edge temp;
+    while (!h.empty()) {
+      temp = h.getMin();
+      h.removeTop();
+      if (!temp.vertex().marked()) return temp;
+    }
+
+    throw std::logic_error("Heap is empty");
   }
 
   void reset_marks() {
