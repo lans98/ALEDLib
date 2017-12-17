@@ -115,7 +115,7 @@ int main() {
 
   std::cout << "MST kruskall for g4:\n";
   start = clock();
-  auto g4_mst = g4.mst_kruskall();
+  auto g4_mst = g4.mst_kruskal();
   end = clock();
   g4_mst.print();
   std::cout << "time for kruskall mst: " << 1000.0 * (end - start) / CLOCKS_PER_SEC << std::endl;
@@ -136,7 +136,7 @@ int main() {
   g5.add_edge('x', 'y', 2);
   g5.add_edge('y', 'z', 3);
 
-  auto g5_mst = g5.mst_kruskall();
+  auto g5_mst = g5.mst_kruskal();
   std::cout << "MST for g5:\n";
   g5_mst.print();
   

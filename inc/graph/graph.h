@@ -460,7 +460,7 @@ public:
 
     std::size_t used = 1;
 
-    while (used < m_g.size()) {
+    while (used < m_g.size()) { 
       try { min_edge = get_min_dijkstra(heap); } 
       catch (const std::exception& e) { break; }
 
@@ -470,7 +470,7 @@ public:
       for (VertexItr ii = m_g.begin(); ii != m_g.end(); ++ii) {
         if (ii->marked()) continue;
 
-        from_min = min_edge.vertex().edges().find(Edge(ii));
+        from_min = min_edge.vertex().edges().find(Edge(ii)); // O(logn)
 
         if (from_min != min_edge.vertex().edges().end()) {
           tmp = distances.find(Edge(ii));
@@ -491,7 +491,7 @@ public:
     return distances;
   }
 
-  Graph<VertexTag, EdgeTag, UNDIRECTED> mst_kruskall() {
+  Graph<VertexTag, EdgeTag, UNDIRECTED> mst_kruskal() {
     static_assert(type == UNDIRECTED, "Graph needs to be aled::UNDIRECTED to obtain MST");
 
     std::vector<FullyEdge> heap;
