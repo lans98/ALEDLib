@@ -20,7 +20,7 @@
 - Quadtree (_region, point_)
 - Octree (_region, point_)
 
-##### How to use it , _not recomended_
+##### How to use it , _not recomended before 1.0.0_
 
 - Setup
 ```
