@@ -1,5 +1,5 @@
-#include "sparse_matrix/sparse_matrix.h"
 #include <memory>
+#include "SparseMatrix.hpp"
 
 int main() {
   auto sp_matrix = std::make_unique<aled::Matrix<int>>(10,10);

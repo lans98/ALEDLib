@@ -1,6 +1,6 @@
 #include <iostream>
 #include <memory>
-#include "lists/double_list.hpp"
+#include "DoubleList.hpp"
 
 using namespace std;
 

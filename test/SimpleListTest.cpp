@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
-#include "lists/simple_list.h"
+
+#include "SimpleList.hpp"
 
 using namespace std;
 

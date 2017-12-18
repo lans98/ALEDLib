@@ -1,5 +1,5 @@
 #include <memory>
-#include "heaps/min_fibo_heap.h"
+#include "MinFiboHeap.hpp"
 
 int main() {
   auto heap = std::make_unique<aled::MinFiboHeap<int>>();

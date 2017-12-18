@@ -1,4 +1,4 @@
-#include "graphviz_tools/gvtools.hpp"
+#include "tools/GVTools.hpp"
 
 int main() {
   aled::GVTool gvt;

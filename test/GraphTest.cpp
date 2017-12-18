@@ -1,6 +1,7 @@
-#include "graph/graph.hpp"
 #include <memory>
 #include <chrono>
+
+#include "Graph.hpp"
 
 class A {};
 

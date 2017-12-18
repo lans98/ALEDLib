@@ -1,6 +1,7 @@
-#include "stack/stack.h"
 #include <iostream>
 #include <memory>
+
+#include "Stack.hpp"
 
 int main() {
   auto stack = std::make_unique<aled::Stack<int>>();

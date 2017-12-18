@@ -1,5 +1,5 @@
 #include <memory>
-#include "heaps/max_array_heap.hpp"
+#include "MaxArrayHeap.hpp"
 
 int main() {
   std::vector<int> v { 8, 7, 3, 9, 19, 12, 14, 2, 1, 23 };

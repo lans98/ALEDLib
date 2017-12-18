@@ -1,4 +1,4 @@
-#include "redblack_tree/redblack_tree.h"
+#include "RedBlackTree.hpp"
 
 int main() {
   aled::RedBlackTree<int> rb;

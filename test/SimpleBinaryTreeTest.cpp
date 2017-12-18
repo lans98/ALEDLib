@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
-#include "simple_bin_tree/sbt.h"
+
+#include "SimpleBinaryTree.hpp"
 
 #define new_shared make_shared
 

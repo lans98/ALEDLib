@@ -1,5 +1,5 @@
 #include <memory>
-#include "heaps/min_binom_heap.h"
+#include "MinBinomHeap.hpp"
 
 int main() {
   auto heap = std::make_unique<aled::MinBinomHeap<int>>();

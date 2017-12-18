@@ -1,5 +1,5 @@
 #include <memory>
-#include "heaps/max_binom_heap.hpp"
+#include "MaxBinomHeap.hpp"
 
 int main() {
   auto heap = std::make_unique<aled::MaxBinomHeap<int>>();

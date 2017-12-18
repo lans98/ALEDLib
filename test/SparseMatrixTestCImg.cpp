@@ -5,7 +5,8 @@
 #include <fstream>
 #include <cstring>
 #include <iostream>
-#include "sparse_matrix/sparse_matrix.h"
+
+#include "SparseMatrix.hpp"
 
 namespace img = cimg_library;
 using spectrum = unsigned char;

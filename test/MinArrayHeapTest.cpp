@@ -1,5 +1,5 @@
 #include <memory>
-#include "heaps/min_array_heap.h"
+#include "MinArrayHeap.hpp"
 
 int main() {
   std::vector<int> v { 8, 7, 3, 9, 19, 12, 5, 3, 2, 2, 3, 1, 17 };

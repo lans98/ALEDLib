@@ -1,5 +1,5 @@
 #include <memory>
-#include "heaps/max_fibo_heap.hpp"
+#include "MaxFiboHeap.hpp"
 
 int main() {
   auto heap = std::make_unique<aled::MaxFiboHeap<int>>();

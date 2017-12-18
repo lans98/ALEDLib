@@ -1,4 +1,4 @@
-#include "avl_tree/avl_tree.hpp"
+#include "AVLTree.hpp"
 
 int main() {
   aled::AVL<int> avl;
