@@ -1,5 +1,5 @@
-#ifndef ALED_SBT_H
-#define ALED_SBT_H
+#ifndef QAED_SBT_H
+#define QAED_SBT_H
 
 #include <iostream>
 #include <functional>
@@ -8,7 +8,7 @@
 #include "Stack.hpp"
 #include "Queue.hpp"
 
-namespace aled {
+namespace qaed {
 
 enum PRINT_ORDER {
   PRE_ORDER,

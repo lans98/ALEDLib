@@ -1,7 +1,7 @@
 #include "AVLTree.hpp"
 
 int main() {
-  aled::AVL<int> avl;
+  qaed::AVL<int> avl;
 
   avl.add(4);
   avl.add(3);

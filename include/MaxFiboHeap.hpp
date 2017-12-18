@@ -1,5 +1,5 @@
-#ifndef ALED_MAX_FIBO_HEAP_H
-#define ALED_MAX_FIBO_HEAP_H 
+#ifndef QAED_MAX_FIBO_HEAP_H
+#define QAED_MAX_FIBO_HEAP_H 
 
 #include "basic/BasicMaxMinHeap.hpp"
 #include "tools/GVTools.hpp"
@@ -12,7 +12,7 @@
 #include <sstream>
 #include <algorithm>
 
-namespace aled {
+namespace qaed {
 
 template <class Type>
 class MaxFiboHeap : public MaxHeap<Type> {

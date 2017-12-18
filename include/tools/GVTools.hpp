@@ -1,5 +1,5 @@
-#ifndef ALED_GVTOOLS_H
-#define ALED_GVTOOLS_H 
+#ifndef QAED_GVTOOLS_H
+#define QAED_GVTOOLS_H 
 
 #include <gvc.h>
 #include <string>
@@ -8,7 +8,7 @@
 
 #include <memory>
 
-namespace aled {
+namespace qaed {
 
 class GVTool {
 private:

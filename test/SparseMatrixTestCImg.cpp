@@ -105,7 +105,7 @@ void binarize(const std::string& filename) {
 
   auto bimg = copy_binary(copy_greyscale(img));
   
-  aled::FastMatrix<spectrum, 0, uint16_t> compress(bimg.height(), bimg.width());
+  qaed::FastMatrix<spectrum, 0, uint16_t> compress(bimg.height(), bimg.width());
   spectrum temp;
   cimg_forXY(bimg, x, y) {
     temp = bimg(x,y,0);
@@ -117,18 +117,18 @@ void binarize(const std::string& filename) {
 }
 
 img::CImg<spectrum> readbin(const std::string& filename) {
-  aled::FastMatrix<spectrum, 0, uint16_t> compress(0,0);
+  qaed::FastMatrix<spectrum, 0, uint16_t> compress(0,0);
   compress.read(filename, false);
 
-  aled::FastMatrix<spectrum, 0>::Size_t width, height;
+  qaed::FastMatrix<spectrum, 0>::Size_t width, height;
   width  = compress.noCols();
   height = compress.noRows();
 
   img::CImg<spectrum> image(width, height, 1, 1, 0);
 
   spectrum temp;
-  for (aled::FastMatrix<spectrum,0>::Size_t ii = 0; ii < height; ++ii) {
-    for (aled::FastMatrix<spectrum,0>::Size_t jj = 0; jj < width; ++jj) {
+  for (qaed::FastMatrix<spectrum,0>::Size_t ii = 0; ii < height; ++ii) {
+    for (qaed::FastMatrix<spectrum,0>::Size_t jj = 0; jj < width; ++jj) {
       try {
         image(jj, ii, 0) = compress.get(ii, jj);
       } catch (std::exception& e) {

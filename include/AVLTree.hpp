@@ -1,5 +1,5 @@
-#ifndef ALED_AVL_TREE_H
-#define ALED_AVL_TREE_H
+#ifndef QAED_AVL_TREE_H
+#define QAED_AVL_TREE_H
 
 #include <algorithm>
 #include <iostream>
@@ -8,7 +8,7 @@
 
 #include "tools/Sfinae.hpp"
 
-namespace aled {
+namespace qaed {
 
 enum PRINT_ORDER {
   PRE_ORDER,

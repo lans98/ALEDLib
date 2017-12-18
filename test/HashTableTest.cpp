@@ -4,7 +4,7 @@
 int main() {
   auto hashing = [](const int& a){ return (a << 2) >> 1; };
 
-  auto hash = std::make_unique<aled::Hash<int, 7>>(hashing);
+  auto hash = std::make_unique<qaed::Hash<int, 7>>(hashing);
 
   hash->add(2312);
   hash->add(123);

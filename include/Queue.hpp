@@ -1,9 +1,9 @@
-#ifndef ALED_QUEUE_H
-#define ALED_QUEUE_H
+#ifndef QAED_QUEUE_H
+#define QAED_QUEUE_H
 
 #include <stdexcept>
 
-namespace aled {
+namespace qaed {
 
 template <class Type>
 class Queue {

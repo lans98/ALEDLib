@@ -1,9 +1,9 @@
-#ifndef ALED_STACK_H
-#define ALED_STACK_H 
+#ifndef QAED_STACK_H
+#define QAED_STACK_H 
 
 #include <stdexcept>
 
-namespace aled {
+namespace qaed {
 
 template <class Type>
 class Stack {

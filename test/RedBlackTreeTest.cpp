@@ -1,7 +1,7 @@
 #include "RedBlackTree.hpp"
 
 int main() {
-  aled::RedBlackTree<int> rb;
+  qaed::RedBlackTree<int> rb;
   rb.add(5);
   rb.add(15);
   rb.add(20);

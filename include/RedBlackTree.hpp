@@ -1,5 +1,5 @@
-#ifndef ALED_REDBLACK_TREE_H
-#define ALED_REDBLACK_TREE_H
+#ifndef QAED_REDBLACK_TREE_H
+#define QAED_REDBLACK_TREE_H
 
 #include <algorithm>
 #include <iostream>
@@ -8,7 +8,7 @@
 
 #include "tools/Sfinae.hpp"
 
-namespace aled {
+namespace qaed {
 
 template <class Type>
 class RedBlackTree {

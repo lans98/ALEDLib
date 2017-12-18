@@ -1,5 +1,5 @@
-#ifndef ALED_MIN_FIBO_HEAP_H
-#define ALED_MIN_FIBO_HEAP_H 
+#ifndef QAED_MIN_FIBO_HEAP_H
+#define QAED_MIN_FIBO_HEAP_H 
 
 #include "basic/BasicMaxMinHeap.hpp"
 #include "tools/GVTools.hpp"
@@ -12,7 +12,7 @@
 #include <sstream>
 #include <algorithm>
 
-namespace aled {
+namespace qaed {
 
 template <class Type, class Comp = std::less<Type>, class Equal = std::equal_to<Type>, class Decreaser = std::minus<Type>>
 class MinFiboHeap : public MinHeap<Type> {

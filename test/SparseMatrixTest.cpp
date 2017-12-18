@@ -2,7 +2,7 @@
 #include "SparseMatrix.hpp"
 
 int main() {
-  auto sp_matrix = std::make_unique<aled::Matrix<int>>(10,10);
+  auto sp_matrix = std::make_unique<qaed::Matrix<int>>(10,10);
 
   std::cout << "Sparse Matrix" << std::endl;
 
@@ -15,7 +15,7 @@ int main() {
   sp_matrix->add(2, 5, 2);
   sp_matrix->printLn();
 
-  auto fast_spmatrix = std::make_unique<aled::FastMatrix<int, 0>>(10, 10);
+  auto fast_spmatrix = std::make_unique<qaed::FastMatrix<int, 0>>(10, 10);
 
   std::cout << "Fast Matrix:" << std::endl;
   for (int i = 0; i < 10; ++i)
@@ -32,7 +32,7 @@ int main() {
 
   fast_spmatrix->write("out");
 
-  auto fast_spmatrix2 = std::make_unique<aled::FastMatrix<int, 0>>(0,0);
+  auto fast_spmatrix2 = std::make_unique<qaed::FastMatrix<int, 0>>(0,0);
   fast_spmatrix2->read("out");
   std::cout << "Fast Matrix 2:" << std::endl;
   fast_spmatrix2->printLn();

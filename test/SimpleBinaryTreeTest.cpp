@@ -8,7 +8,7 @@
 using namespace std;
 
 int main() {
-  auto sbt = make_unique<aled::SBT<int>>();
+  auto sbt = make_unique<qaed::SBT<int>>();
 
   sbt->add(6);
   sbt->add(1);
@@ -22,7 +22,7 @@ int main() {
   sbt->printLn();
   sbt->printIterative();
   cout << '\n';
-  aled::SBT<int>::Node* father = 0;
+  qaed::SBT<int>::Node* father = 0;
   try {
     father = sbt->getFatherOf(7);
     cout << father->data << endl;
@@ -30,7 +30,7 @@ int main() {
     cout << e.what() << endl;
   } 
 
-  aled::SBT<int>::Node* bro = 0;
+  qaed::SBT<int>::Node* bro = 0;
   try {
     bro = sbt->getBrotherOf(7);
     cout << bro->data << endl;
@@ -38,7 +38,7 @@ int main() {
     cout << e.what() << endl;
   }
 
-  aled::SBT<int>::Node* uncle = 0;
+  qaed::SBT<int>::Node* uncle = 0;
   try {
     uncle = sbt->getUncleOf(5);
     cout << uncle->data << endl;

@@ -1,10 +1,10 @@
-#ifndef ALED_HEAP_H
-#define ALED_HEAP_H 
+#ifndef QAED_BASIC_HEAP_H
+#define QAED_BASIC_HEAP_H 
 
 #include <cstdlib>
 #include <iostream>
 
-namespace aled {
+namespace qaed {
 
 template <class Type>
 class Heap {

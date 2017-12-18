@@ -1,5 +1,5 @@
-#ifndef ALED_MIN_ARRAY_HEAP
-#define ALED_MIN_ARRAY_HEAP
+#ifndef QAED_MIN_ARRAY_HEAP
+#define QAED_MIN_ARRAY_HEAP
 
 #include "basic/BasicMaxMinHeap.hpp"
 #include "tools/GVTools.hpp"
@@ -9,7 +9,7 @@
 #include <sstream>
 #include <algorithm>
 
-namespace aled {
+namespace qaed {
 
 template <class Type>
 class MinArrayHeap : public MinHeap<Type> {

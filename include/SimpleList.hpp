@@ -1,9 +1,9 @@
-#ifndef ALED_SIMPLE_LIST_H
-#define ALED_SIMPLE_LIST_H
+#ifndef QAED_SIMPLE_LIST_H
+#define QAED_SIMPLE_LIST_H
 
 #include "basic/BasicList.hpp"
 
-namespace aled {
+namespace qaed {
 
 template <class Type>
 class SimpleList : public List<Type> {

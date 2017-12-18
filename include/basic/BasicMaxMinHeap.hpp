@@ -1,9 +1,9 @@
-#ifndef ALED_MAX_MIN_HEAP_H
-#define ALED_MAX_MIN_HEAP_H 
+#ifndef QAED_BASIC_MAX_MIN_HEAP_H
+#define QAED_BASIC_MAX_MIN_HEAP_H 
 
 #include "BasicHeap.hpp"
 
-namespace aled {
+namespace qaed {
 
 template <class Type>
 class MaxHeap : public Heap<Type> {

@@ -5,7 +5,7 @@
 using namespace std;
 
 int main() {
-  auto list = make_unique<aled::DoubleList<int>>();
+  auto list = make_unique<qaed::DoubleList<int>>();
   list->add(3);
   list->add(5);
   list->add(6);
@@ -22,7 +22,7 @@ int main() {
   list->printLn(cout);
 
   cout << "Iterators:\n";
-  aled::DoubleList<int>::Iterator it = list->begin();
+  qaed::DoubleList<int>::Iterator it = list->begin();
   for (; it != list->end(); ++it) 
     cout << *it << ' ';
   cout << endl;

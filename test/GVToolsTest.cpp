@@ -1,7 +1,7 @@
 #include "tools/GVTools.hpp"
 
 int main() {
-  aled::GVTool gvt;
+  qaed::GVTool gvt;
   gvt.createGraph("G", Agdirected);
 
   gvt.node("n");

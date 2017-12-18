@@ -1,12 +1,12 @@
-#ifndef ALED_LIST_H
-#define ALED_LIST_H
+#ifndef QAED_BASIC_LIST_H
+#define QAED_BASIC_LIST_H
 
 #include <ostream>
 #include <functional>
 
 #include "tools/Sfinae.hpp"
 
-namespace aled {
+namespace qaed {
 
 template <class Type>
 class List {

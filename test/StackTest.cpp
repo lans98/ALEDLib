@@ -4,7 +4,7 @@
 #include "Stack.hpp"
 
 int main() {
-  auto stack = std::make_unique<aled::Stack<int>>();
+  auto stack = std::make_unique<qaed::Stack<int>>();
 
   stack->push(5);
   stack->push(7);

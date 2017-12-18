@@ -1,9 +1,9 @@
-#ifndef ALED_SFINAE_H
-#define ALED_SFINAE_H
+#ifndef QAED_SFINAE_H
+#define QAED_SFINAE_H
 
 #include <utility>
 
-namespace aled {
+namespace qaed {
 
 template <typename UnnamedType>
 class container {

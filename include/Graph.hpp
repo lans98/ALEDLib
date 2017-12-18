@@ -1,5 +1,5 @@
-#ifndef ALED_GRAPH_H
-#define ALED_GRAPH_H
+#ifndef QAED_GRAPH_H
+#define QAED_GRAPH_H
 
 #include <set>
 #include <queue>
@@ -14,7 +14,7 @@
 #include "tools/GVTools.hpp"
 #include "MinFiboHeap.hpp"
 
-namespace aled {
+namespace qaed {
 
 enum G_TYPE {
   DIRECTED,
@@ -175,7 +175,7 @@ public:
     static_assert(
       type == DIRECTED   ||
       type == UNDIRECTED ,
-      "Unknown graph type (posible values are {aled::DIRECTED, aled::UNDIRECTED})"      
+      "Unknown graph type (posible values are {qaed::DIRECTED, qaed::UNDIRECTED})"      
     );
 
     static_assert(
@@ -491,7 +491,7 @@ public:
   }
 
   Graph<VertexTag, EdgeTag, UNDIRECTED> mst_kruskal() {
-    static_assert(type == UNDIRECTED, "Graph needs to be aled::UNDIRECTED to obtain MST");
+    static_assert(type == UNDIRECTED, "Graph needs to be qaed::UNDIRECTED to obtain MST");
 
     std::vector<FullyEdge> heap;
     fill_kruskall_heap(heap);
@@ -514,7 +514,7 @@ public:
   }
 
   Graph<VertexTag, EdgeTag, UNDIRECTED> mst_prim() {
-    static_assert(type == UNDIRECTED, "Graph needs to be aled::UNDIRECTED to obtain MST");
+    static_assert(type == UNDIRECTED, "Graph needs to be qaed::UNDIRECTED to obtain MST");
 
     std::vector<FullyEdge> heap;
     heap.reserve(m_no_edges/2);
@@ -575,7 +575,7 @@ private:
   }
 
   void fill_kruskall_heap(std::vector<FullyEdge>& heap) {
-    static_assert(type == UNDIRECTED, "Graph needs to be aled::UNDIRECTED to obtain MST");
+    static_assert(type == UNDIRECTED, "Graph needs to be qaed::UNDIRECTED to obtain MST");
 
     heap.reserve(m_no_edges/2);
     for (VertexItr v = m_g.begin(); v != m_g.end(); ++v) {

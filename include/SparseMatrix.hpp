@@ -1,5 +1,5 @@
-#ifndef ALED_SPARSE_MATRIX
-#define ALED_SPARSE_MATRIX
+#ifndef QAED_SPARSE_MATRIX
+#define QAED_SPARSE_MATRIX
 
 #include <map>
 #include <tuple>
@@ -11,7 +11,7 @@
 // - Remove row and col
 // - Remove an element in pos(i,j)
 
-namespace aled {
+namespace qaed {
 
 template <class Type>
 class Matrix {

@@ -1,5 +1,5 @@
-#ifndef ALED_HASH_H
-#define ALED_HASH_H
+#ifndef QAED_HASH_TABLE_H
+#define QAED_HASH_TABLE_H
 
 #include <set>
 #include <vector>
@@ -8,7 +8,7 @@
 
 #include "tools/Sfinae.hpp"
 
-namespace aled {
+namespace qaed {
 
 /// Consider using Size with an prime number
 /// remember that hash uses modulo, if we use

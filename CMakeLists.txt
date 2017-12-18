@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.7)
-project(ALEDLib CXX)
+project(qaedlib CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(TEST_SRC_DIR ${PROJECT_SOURCE_DIR}/test)

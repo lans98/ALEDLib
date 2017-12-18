@@ -17,7 +17,7 @@ public:
 };
 
 int main() {
-  aled::Graph<int, int, aled::DIRECTED> g1;
+  qaed::Graph<int, int, qaed::DIRECTED> g1;
 
   g1.add_vertex(3);
   g1.add_vertex(2);
@@ -61,10 +61,10 @@ int main() {
   g1.remove_vertex(9);
   g1.print();
 
-  //aled::Graph<A, A> g4;
+  //qaed::Graph<A, A> g4;
   //Static assert fails for type A that isn't comparable
 
-  aled::Graph<std::string, int, aled::DIRECTED> g2;
+  qaed::Graph<std::string, int, qaed::DIRECTED> g2;
   g2.add_vertex("hola");
   g2.add_vertex("mundo");
 
@@ -75,11 +75,11 @@ int main() {
   g2.add_edge("hola", "mundo", 2);
   g2.print();
 
-  aled::Graph<B, B, aled::DIRECTED> g3;
+  qaed::Graph<B, B, qaed::DIRECTED> g3;
   // Fails because graph needs to be undirected
   // auto mst_g3 = g3.mst_kruskall();
 
-  aled::Graph<char, int, aled::UNDIRECTED> g4;
+  qaed::Graph<char, int, qaed::UNDIRECTED> g4;
   g4.add_vertex('a');
   g4.add_vertex('b');
   g4.add_vertex('c');
@@ -129,7 +129,7 @@ int main() {
   std::cout << "time for prim mst: " << 1000.0 * (end - start) / CLOCKS_PER_SEC << std::endl;
 
   
-  aled::Graph<char, int, aled::UNDIRECTED> g5;
+  qaed::Graph<char, int, qaed::UNDIRECTED> g5;
   g5.add_vertex('x');
   g5.add_vertex('y');
   g5.add_vertex('z');

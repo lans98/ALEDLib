@@ -2,7 +2,7 @@
 #include "MaxBinomHeap.hpp"
 
 int main() {
-  auto heap = std::make_unique<aled::MaxBinomHeap<int>>();
+  auto heap = std::make_unique<qaed::MaxBinomHeap<int>>();
 
   heap->add(4);
   heap->add(9);

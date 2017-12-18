@@ -2,7 +2,7 @@
 #include "MaxFiboHeap.hpp"
 
 int main() {
-  auto heap = std::make_unique<aled::MaxFiboHeap<int>>();
+  auto heap = std::make_unique<qaed::MaxFiboHeap<int>>();
 
   heap->add(4);
   heap->add(2);

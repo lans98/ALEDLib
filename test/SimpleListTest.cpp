@@ -7,7 +7,7 @@ using namespace std;
 
 int main() {
 
-  auto list = make_unique<aled::SimpleList<int>>();
+  auto list = make_unique<qaed::SimpleList<int>>();
   
   list->add(3);
   list->add(4);
@@ -25,7 +25,7 @@ int main() {
   list->printLn(cout);
 
   cout << "Iterators:\n";
-  aled::SimpleList<int>::Iterator it = list->begin();
+  qaed::SimpleList<int>::Iterator it = list->begin();
   for (; it != list->end(); ++it)
     cout << *it << ' ';
   cout << endl;

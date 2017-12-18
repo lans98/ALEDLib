@@ -2,7 +2,7 @@
 #include "MinBinomHeap.hpp"
 
 int main() {
-  auto heap = std::make_unique<aled::MinBinomHeap<int>>();
+  auto heap = std::make_unique<qaed::MinBinomHeap<int>>();
 
   heap->add(4);
   heap->add(2);

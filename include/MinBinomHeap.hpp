@@ -1,5 +1,5 @@
-#ifndef ALED_MIN_BINOM_HEAP
-#define ALED_MIN_BINOM_HEAP 
+#ifndef QAED_MIN_BINOM_HEAP
+#define QAED_MIN_BINOM_HEAP 
 
 #include "basic/BasicMaxMinHeap.hpp"
 #include "tools/GVTools.hpp"
@@ -11,7 +11,7 @@
 #include <sstream>
 #include <algorithm>
 
-namespace aled {
+namespace qaed {
 
 template <class Type, class Comp = std::less<Type>, class Equal = std::equal_to<Type>> 
 class MinBinomHeap : public MinHeap<Type> {
