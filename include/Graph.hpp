@@ -12,7 +12,7 @@
 
 #include "tools/Sfinae.hpp"
 #include "tools/GVTools.hpp"
-#include "MinFiboHeap.hpp"
+#include "FibonacciHeap.hpp"
 
 namespace qaed {
 
@@ -116,7 +116,7 @@ private:
     };
   };
 
-  using DijkstraHeap = MinFiboHeap<Edge, typename Edge::tagless, typename Edge::tagequal, typename Edge::tagminus>;
+  using DijkstraHeap = FibonacciHeap<Edge, typename Edge::tagless, typename Edge::tagminus>;
 
   struct FullyEdge {
   private:
@@ -606,8 +606,8 @@ private:
 
     Edge temp;
     while (!h.empty()) {
-      temp = h.getMin();
-      h.removeTop();
+      temp = h.get_top();
+      h.remove_top();
       if (!temp.vertex().marked()) return temp;
     }
 

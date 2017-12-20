@@ -66,7 +66,7 @@ private:
 
   struct Equal {
     bool operator()(const Type& l, const Type& r) {
-      return !(std::declval<Comp>()(l, r) || std::declval<Comp>()(r, l));
+      return !(Comp()(l, r) || Comp()(r, l));
     }
   } equal;
 
@@ -121,8 +121,11 @@ public:
     if (m_roots.empty() || m_top == m_roots.end())
       throw std::runtime_error("Heap is empty");
 
-    return *m_top; 
+    return (*m_top)->data; 
   }
+
+  Size size() final { return m_size; }
+  bool empty() final { return m_size == 0; }
 
   void print(std::ostream& out = std::cout) const final {  }
 
@@ -252,7 +255,7 @@ private:
   NodeItr chain_merge(NodeItr it, std::vector<NodeItr>& dg) {
     NodeDegree id = (*it)->degree;
 
-    if (dg.at(id) == it || dg.at(it) == m_roots.end()) {
+    if (dg.at(id) == it || dg.at(id) == m_roots.end()) {
       dg.at(id) = it;
       return it;
     }
@@ -303,7 +306,7 @@ private:
       if (!comp(n->data, p->data))
         std::swap(n->data, p->data);
       else 
-        return n;
+        return;
 
       n = p;
       p = n->parent;

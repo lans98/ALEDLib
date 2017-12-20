@@ -31,7 +31,7 @@ private:
 
   struct Equal {
     bool operator()(const Type& l, const Type& r) {
-      return !(std::declval<Comp>()(l,r) || std::declval<Comp>()(r,l));
+      return !(Comp()(l,r) || Comp()(r,l));
     }
   } equal;
 
@@ -71,6 +71,9 @@ public:
 
     return m_vec.at(0);
   }
+
+  Size size() final { return m_vec.size(); }
+  bool empty() final { return m_vec.empty(); }
 
   void sort() {
     Size size = m_vec.size();
