@@ -16,7 +16,7 @@ enum PRINT_ORDER {
   POS_ORDER
 };
 
-template <class Type>
+template <class Type, class Comp = std::less<Type>>
 class AVL {
 private:
 
@@ -34,6 +34,7 @@ private:
   };
 
   Node* m_root;
+  Comp  comp;
 
 public:
   AVL(): m_root(0) {
@@ -353,11 +354,11 @@ public:
 
   class Iterator {
   private:
-    AVL<Type>::Node* current;
+    Node* current;
   public:
     Iterator(): current(0) {}
 
-    Iterator(AVL<Type>::Node* root) {
+    Iterator(Node* root) {
       current = root;
 
       if (!current) return;

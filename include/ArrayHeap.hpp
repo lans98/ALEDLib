@@ -238,7 +238,7 @@ private:
       throw std::logic_error("size passed is bigger than array size");
 
     if (ii + 1 > size || left(ii) + 1 > size) 
-      throw std::logic_error("index exceeds size");
+      return;
 
     Idx m = ii;
     if (comp(m_vec.at(ii), m_vec.at(left(ii))))
