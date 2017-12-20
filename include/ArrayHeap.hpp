@@ -1,85 +1,97 @@
-#ifndef QAED_MIN_ARRAY_HEAP
-#define QAED_MIN_ARRAY_HEAP
+#ifndef QAED_ARRAY_HEAP_HPP
+#define QAED_ARRAY_HEAP_HPP 
 
-#include "basic/BasicMaxMinHeap.hpp"
 #include "tools/GVTools.hpp"
+#include "basic/BasicHeap.hpp"
 
 #include <queue>
 #include <vector>
 #include <sstream>
 #include <algorithm>
+#include <functional>
 
 namespace qaed {
 
-template <class Type>
-class MinArrayHeap : public MinHeap<Type> {
+template <class Type, class Comp, class Modi>
+class ArrayHeap : public Heap<Type> {
+public:
+  using Vector = std::vector<Type>;
+  using Itr = typename std::vector<Type>::iterator;
+  using Idx = typename std::vector<Type>::size_type;
+  using Size = Idx;
+
+  using value_type = Type;
+  using reference = Type&;
+  using const_reference = Type const&;
+
 private:
-  std::vector<Type> m_vec;
+  Vector m_vec;
+  Comp comp;
+  Modi modi;
 
-  using idx_t   = typename std::vector<Type>::size_type;
-  using vecit_t = typename std::vector<Type>::iterator;
-
-  idx_t left(const idx_t& ii)   { return (ii * 2) + 1; }
-  idx_t right(const idx_t& ii)  { return left(ii) + 1; }
-  idx_t parent(const idx_t& ii) { return (ii - 1) / 2; }
-
+  struct Equal {
+    bool operator()(const Type& l, const Type& r) {
+      return !(std::declval<Comp>()(l,r) || std::declval<Comp>()(r,l));
+    }
+  } equal;
 
 public:
-  MinArrayHeap() = default;
- ~MinArrayHeap() = default;
+  ArrayHeap() = default;
+ ~ArrayHeap() = default;
 
-  MinArrayHeap(const std::size_t& reserve): MinHeap<Type>(), m_vec(reserve) {}
-  MinArrayHeap(const std::vector<Type>& vec): MinHeap<Type>(), m_vec(vec) {
-    for (idx_t ii = m_vec.size()/2; ii != -1UL; --ii)
+  ArrayHeap(const Vector& vec) : Heap<Type>(), m_vec(vec) {
+    for (Idx ii = m_vec.size()/2; ii != -1UL; --ii)
       heapify(ii);
   }
 
-  void add(const Type& data) final {
+  void add(const Type& data) noexcept(false) final {
     m_vec.push_back(data);
     heapify(parent(m_vec.size() - 1));
   }
 
-  void removeTop() final {
-    if (m_vec.empty()) return;
+  void remove(const Type& data) noexcept(false) final {
+    Idx ii       = find(data);
+    m_vec.at(ii) = modi(m_vec.at(0), Type(1));
+    bubble_key(ii);
+    remove_top();
+  }
+
+  void remove_top() noexcept(false) final {
+    if (m_vec.empty()) 
+      throw std::logic_error("Heap is empty");
 
     std::swap(m_vec.at(0), m_vec.at(m_vec.size() - 1));
     m_vec.pop_back();
     heapify(0);
   }
 
-  void remove(const Type& data) final {
-    idx_t ii =  find(data);
-    m_vec.at(ii) = m_vec.at(0) - 1;
-    decreaseKey(ii);
-    removeTop();
+  const_reference get_top() noexcept(false) final {
+    if (m_vec.empty())
+      throw std::logic_error("Heap is empty");
+
+    return m_vec.at(0);
   }
 
-  void sort() final {
-    size_t size = m_vec.size();
+  void sort() {
+    Size size = m_vec.size();
     while (size > 1) {
       std::swap(m_vec.at(0), m_vec.at(size - 1));
       heapify(0, --size);
     }
-
     std::reverse(m_vec.begin(), m_vec.end());
   }
 
-  const Type& getMin() const final {
-    if (m_vec.empty())
-      throw std::runtime_error("Empty heap");
-
-    return m_vec.at(0);
-  }
+  const Vector& get_vector() { return m_vec; }
 
   void print(std::ostream& out) const final {
     for (auto& x : m_vec)
       out << x << ' ';
   }
 
-  void graph(const std::string& filename, bool xdgopen = false) final {
+  void graph(const char* filename, bool xdgopen = false) final {
     if (m_vec.empty()) return;
 
-    std::queue<idx_t>     nodes;
+    std::queue<Idx>       nodes;
     std::queue<Agnode_t*> parents;
     nodes.push(0);
 
@@ -97,25 +109,25 @@ public:
     int no_nodes_nextlvl = 0;
     int no_nodes_currlvl = 1;
     int node_degree      = 0;
-    idx_t temp_node;
+    Idx temp_node;
 
     while (!nodes.empty()) {
       // Extract the top element
       temp_node = nodes.front(); nodes.pop();
 
       // Increase the number of childs of the next level
-      // and decrease the actual nodes processed in the
+      // and decrease the actual nodes processed in the 
       // current level
-      no_nodes_nextlvl += noOfChilds(temp_node);
+      no_nodes_nextlvl += no_of_childs(temp_node);
       no_nodes_currlvl -= 1;
-
+      
       // Convert data from the actual node to string
       converter << m_vec.at(temp_node);
 
       // Only search for node
       current_agnode = gvt.node(converter.str(), current_glevel, 0);
 
-      // If the search returns null create node
+      // If the search returns null create node 
       if (!current_agnode) {
         current_agnode = gvt.node(converter.str(), current_glevel);
       } else {
@@ -143,7 +155,7 @@ public:
       converter.str(std::string());
       converter.clear();
 
-      // If there are left and right childs push them to the
+      // If there are left and right childs push them to the 
       // 'nodes' queue.
       if (left(temp_node) < m_vec.size())
         nodes.push(left(temp_node));
@@ -151,28 +163,28 @@ public:
       if (right(temp_node) < m_vec.size())
         nodes.push(right(temp_node));
 
-      // If 'parents' queue is not empty, then the top element is a
+      // If 'parents' queue is not empty, then the top element is a 
       // father
       if (!parents.empty()) {
-        cparent_agnode = parents.front();
+        cparent_agnode = parents.front(); 
         node_degree    = agdegree(gvt.mainGraph(), cparent_agnode, false, true);
 
         // If the degree of cparent_agnode is greater or equal to 2
-        // pop this node from the queue and select the next one to
+        // pop this node from the queue and select the next one to 
         // be the parent
         if (node_degree >= 2) {
           parents.pop();
           cparent_agnode = parents.front();
         }
 
-        // Finally create an edge between the actual node an the
+        // Finally create an edge between the actual node an the 
         // parent node
         gvt.edge(cparent_agnode, current_agnode);
       }
 
-      // Just push the actual node if it has at least one child
+      // Just push the actual node if it has at least one child 
       // that is, it's a parent
-      if (noOfChilds(temp_node) != 0)
+      if (no_of_childs(temp_node) != 0)
         parents.push(current_agnode);
 
       if (no_nodes_nextlvl != 0 && no_nodes_currlvl == 0) {
@@ -183,68 +195,77 @@ public:
     }
 
     gvt.layout("dot");
-    gvt.renderToFile("png", filename.c_str());
+    gvt.renderToFile("png", filename);
 
-    if (xdgopen) std::system(("xdg-open " + filename).c_str());
+    if (xdgopen) {
+      std::string cmd = "xdg-open ";
+      std::system(cmd.append(filename).c_str());
+    }
   }
-
+  
 private:
+  Idx left(const Idx& ii) noexcept { return (ii * 2) + 1; }
+  Idx right(const Idx& ii) noexcept { return left(ii) + 1; }
+  Idx parent(const Idx& ii) noexcept { return (ii - 1) / 2; }
 
-  int noOfChilds(const idx_t& ii) {
+  int no_of_childs(const Idx& ii) noexcept {
     int num = 0;
-
     if (left(ii) < m_vec.size())
       num += 1;
-
     if (right(ii) < m_vec.size())
       num += 1;
-
     return num;
   }
 
-  idx_t find(const Type& data) {
-    vecit_t it = std::find(m_vec.begin(), m_vec.end(), data);
-    return std::distance(m_vec.begin(), it);
+  Idx find(const Type& data) noexcept(false) {
+    Itr ii = std::find_if(m_vec.begin(), m_vec.end(), [&data, this](auto& e){ 
+      return this->equal(e, data);
+    });
+
+    if (ii == m_vec.end())
+      throw std::runtime_error("Element doesn't exist");
+
+    return std::distance(m_vec.begin(), ii);
   }
 
-  void heapify(const idx_t& ii, size_t size = 0) {
+  void heapify(const Idx& ii, Size size = 0) noexcept(false) {
     if (size == 0)
-      size = m_vec.size();
+      size == m_vec.size();
     else if (size > m_vec.size())
-      return;
+      throw std::logic_error("size passed is bigger than array size");
 
-    if (ii + 1 > size)       return;
-    if (left(ii) + 1 > size) return;
+    if (ii + 1 > size || left(ii) + 1 > size) 
+      throw std::logic_error("index exceeds size");
 
-    idx_t m = ii;
-    if (m_vec.at(ii) > m_vec.at(left(ii)))
+    Idx m = ii;
+    if (comp(m_vec.at(ii), m_vec.at(left(ii))))
       m = left(ii);
 
-    if (right(ii) < size && m_vec.at(m) > m_vec.at(right(ii)))
+    if (right(ii) < size && comp(m_vec.at(m), m_vec.at(right(ii))))
       m = right(ii);
 
     if (m == ii) return;
-
     std::swap(m_vec.at(ii), m_vec.at(m));
     heapify(m, size);
   }
 
-  void decreaseKey(const idx_t& ii) {
-    idx_t m = ii;
+  void bubble_key(const Idx& ii) noexcept(false) {
+    Idx m = ii;
 
-    while (m != 0) {
-      if (m_vec.at(m) > m_vec.at(parent(m)))
+    for (Idx m = ii; m != 0; m = parent(m)) {
+      if (!comp(m_vec.at(m), m_vec.at(parent(m))))
         std::swap(m_vec.at(m), m_vec.at(parent(m)));
       else
         return;
-
-      m = parent(ii);
     }
-
   }
-
 };
 
+template <class Type>
+using MaxArrayHeap = ArrayHeap<Type, std::greater<Type>, std::plus<Type>>;
+
+template <class Type>
+using MinArrayHeap = ArrayHeap<Type, std::less<Type>, std::minus<Type>>;
 
 }
 
