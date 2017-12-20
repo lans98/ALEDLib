@@ -83,7 +83,7 @@ public:
 
   const Vector& get_vector() { return m_vec; }
 
-  void print(std::ostream& out) const final {
+  void print(std::ostream& out = std::cout) const final {
     for (auto& x : m_vec)
       out << x << ' ';
   }
