@@ -1,13 +1,13 @@
-#ifndef QAED_BINOMIAL_HEAP_HPP
-#define QAED_BINOMIAL_HEAP_HPP
+#ifndef QAED_FIBONACCI_HEAP_HPP
+#define QAED_FIBONACCI_HEAP_HPP 
 
 #include "tools/GVTools.hpp"
 #include "basic/BasicHeap.hpp"
 
 #include <list>
 #include <cmath>
-#include <tuple>
 #include <queue>
+#include <tuple>
 #include <vector>
 #include <sstream>
 #include <algorithm>
@@ -15,8 +15,8 @@
 
 namespace qaed {
 
-template <class Type, class Comp, class Modi >
-class BinomialHeap : public Heap<Type> {
+template <class Type, class Comp, class Modi>
+class FibonacciHeap : public Heap<Type> {
 public:
   using value_type = Type;
   using reference = Type&;
@@ -24,19 +24,21 @@ public:
   using Size = std::size_t;
 
 private:
+  enum Color { WHITE, BLACK };
 
   struct Node {
     using NodeCont = typename std::list<Node*>;
     using NodeItr  = typename std::list<Node*>::iterator;
     using Degree   = unsigned short;
 
-    Type   data;
     Degree degree;
+    Color  color;
+    Type   data;
 
     Node*    parent;
     NodeCont children;
 
-    Node(const_reference data) : degree(0), data(data), parent(0), children() {}
+    Node(const_reference data) : degree(0), color(WHITE), data(data), parent(0), children() {}
 
     NodeItr beg() { return children.begin(); }
     NodeItr end() { return children.end(); }
@@ -66,19 +68,26 @@ private:
 
   struct Equal {
     bool operator()(const Type& l, const Type& r) {
-      return !(std::declval<Comp>()(l, r) || std::declval<Comp>()(r, l));
+      return !(std::declval<Comp>()(l,r) || std::declval<Comp>()(r,l));
     }
   } equal;
 
 public:
-  BinomialHeap() : m_roots(), m_top(m_roots.end()) {}
- ~BinomialHeap() = default;
+  FibonacciHeap() : m_roots(), m_top(m_roots.end()), m_size(0) {}
+ ~FibonacciHeap() = default;
 
   void add(const_reference data) final {
     Node* tmp = new Node(data);
     m_roots.push_front(tmp);
-    merge();
-    update_top();
+    m_size += 1;
+
+    if (m_top == m_roots.end()) {
+      m_top = m_roots.begin();
+      return;
+    }
+
+    if (m_roots.size() == 1 || comp(data, (*m_top)->data))
+      m_top = m_roots.begin();
   }
 
   void remove(const_reference data) final {
@@ -126,7 +135,7 @@ public:
 
   void print(std::ostream& out = std::cout) const final {  }
 
-  void graph(const char* filename, bool xdgopen = false) final {
+  void graph(const char* filename, bool xdgopen = false) final { 
     if (m_roots.empty()) return;
 
     std::queue<Node*>                        nodes;
@@ -231,7 +240,7 @@ public:
   }
 
 private:
-  bool is_root(Node* n) { return (bool) !n->parent; }
+  bool is_root(Node* n) { return (bool) !n->parent;}
 
   NodeItr basic_merge(NodeItr& f, NodeItr& s) {
     if (comp((*f)->data, (*s)->data)) {
@@ -299,15 +308,22 @@ private:
     Node* p = n->parent;
     if (!p) return;
 
-    while (p) {
-      if (!comp(n->data, p->data))
-        std::swap(n->data, p->data);
-      else 
-        return n;
+    if (!comp(n->data, p->data) && n->color != BLACK) return;
 
-      n = p;
-      p = n->parent;
-    }
+    NodeItr ii = std::find(p->beg(), p->end(), n);
+    if (ii == p->end())
+      throw std::runtime_error("Losted n, rare");
+
+    m_roots.push_front(n);
+    p->children.erase(ii);
+    p->degree -= 1;
+    n->color = WHITE;
+
+    if (p->color == BLACK)
+      bubble_key(p);
+
+    if (!is_root(p))
+      p->color = BLACK;
   }
 
   Node* find(const_reference data, NodeItr& found_at) {
@@ -341,16 +357,15 @@ private:
 
       if (tmp) break;
     }
-
     return tmp;
   }
 };
 
 template <class Type>
-using MaxBinomialHeap = BinomialHeap<Type, std::greater<Type>, std::plus<Type>>;
+using MaxFibonacciHeap = FibonacciHeap<Type, std::greater<Type>, std::plus<Type>>;
 
 template <class Type>
-using MinBinomialHeap = BinomialHeap<Type, std::less<Type>, std::minus<Type>>;
+using MinFibonacciHeap = FibonacciHeap<Type, std::less<Type>, std::minus<Type>>;
 
 }
 
