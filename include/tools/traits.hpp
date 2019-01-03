@@ -108,8 +108,6 @@ struct is_fully_comparable<T, typename std::enable_if<is_comparable_object<T>::v
     std::is_same<bool, decltype(std::declval<T>().operator<=(std::declval<T>()))>::value &&
     std::is_same<bool, decltype(std::declval<T>().operator>=(std::declval<T>()))>::value > {};
 
-
-
 }
 
 #endif
