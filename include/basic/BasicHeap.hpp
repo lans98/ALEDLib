@@ -12,14 +12,21 @@ public:
   Heap()          = default;
   virtual ~Heap() = default;
 
-  virtual void add(const Type& data)    = 0;
-  virtual void removeTop()              = 0;
-  virtual void remove(const Type& data) = 0;
+  using value_type = Type;
+  using reference = Type&;
+  using const_reference = Type const&;
+  using Size = std::size_t;
 
-  virtual void sort() = 0;
+  virtual void            add(const Type& data)    = 0;
+  virtual void            remove(const Type& data) = 0;
+  virtual void            remove_top()             = 0;
+  virtual const_reference get_top()                = 0;
+
+  virtual Size size() = 0;
+  virtual bool empty() = 0;
 
   virtual void print(std::ostream& out = std::cout) const = 0;
-  virtual void graph(const std::string& filename, bool xdgopen = false) = 0;
+  virtual void graph(const char* filename, bool xdgopen = false) = 0;
 };
 
 }

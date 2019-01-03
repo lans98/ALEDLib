@@ -12,7 +12,7 @@
 
 #include "tools/Sfinae.hpp"
 #include "tools/GVTools.hpp"
-#include "MinFiboHeap.hpp"
+#include "FibonacciHeap.hpp"
 
 namespace qaed {
 
@@ -66,7 +66,7 @@ private:
   using VertexItr = typename std::set<Vertex>::iterator;
 
   struct Edge {
-  private: 
+  private:
     VertexItr       m_dest;
     mutable EdgeTag m_data;
 
@@ -116,7 +116,7 @@ private:
     };
   };
 
-  using DijkstraHeap = MinFiboHeap<Edge, typename Edge::tagless, typename Edge::tagequal, typename Edge::tagminus>;
+  using DijkstraHeap = FibonacciHeap<Edge, typename Edge::tagless, typename Edge::tagminus>;
 
   struct FullyEdge {
   private:
@@ -133,7 +133,7 @@ private:
       m_end(e),
       m_data(d) {}
 
-    FullyEdge(const FullyEdge& fe) : 
+    FullyEdge(const FullyEdge& fe) :
       m_beg(fe.m_beg),
       m_end(fe.m_end),
       m_data(fe.m_data) {}
@@ -175,7 +175,7 @@ public:
     static_assert(
       type == DIRECTED   ||
       type == UNDIRECTED ,
-      "Unknown graph type (posible values are {qaed::DIRECTED, qaed::UNDIRECTED})"      
+      "Unknown graph type (posible values are {qaed::DIRECTED, qaed::UNDIRECTED})"
     );
 
     static_assert(
@@ -197,7 +197,7 @@ public:
   std::size_t no_edges() { return m_no_edges; }
 
   auto add_vertex(const VertexTag& data) {
-    auto result = m_g.emplace(Vertex(data)); 
+    auto result = m_g.emplace(Vertex(data));
     if (result.second)
       m_no_vertexes += 1;
 
@@ -205,7 +205,7 @@ public:
   }
 
   auto add_vertex(const Vertex& v) {
-    auto result = m_g.insert(v); 
+    auto result = m_g.insert(v);
     if (result.second)
       m_no_vertexes += 1;
 
@@ -219,14 +219,14 @@ public:
   }
 
   auto add_edge(const VertexItr& v1, const VertexItr& v2, const EdgeTag& data) {
-    if (v1 == m_g.end() || v2 == m_g.end()) 
+    if (v1 == m_g.end() || v2 == m_g.end())
       throw std::runtime_error("One/two vertex(s) were not found");
 
     auto result = v1->edges().emplace(Edge(v2, data));
     if (result.second)
       m_no_edges += 1;
 
-    if constexpr (type == UNDIRECTED) 
+    if constexpr (type == UNDIRECTED)
       result = v2->edges().emplace(Edge(v1, data));
 
     return result;
@@ -264,7 +264,7 @@ public:
 
     if constexpr (type == UNDIRECTED) {
       e = v2->edges().find(Edge(v1));
-      if (e != v2->edges().end()) 
+      if (e != v2->edges().end())
         v2->edges().erase(e);
     }
 
@@ -273,7 +273,7 @@ public:
   }
 
   bool remove_edges_with(const VertexTag& d) {
-    return remove_edges_with(m_g.find(Vertex(d))); 
+    return remove_edges_with(m_g.find(Vertex(d)));
   }
 
   bool remove_edges_with(const VertexItr& vit) {
@@ -381,7 +381,7 @@ public:
       visit_func(*tmp);
       tmp->mark();
 
-      for (auto& e : tmp->edges()) 
+      for (auto& e : tmp->edges())
         if (!e.vertex().marked()) {
           queue.push(e.vertex_itr());
           e.vertex().mark();
@@ -405,7 +405,7 @@ public:
       visit_func(*tmp);
       tmp->mark();
 
-      for (auto& e : tmp->edges()) 
+      for (auto& e : tmp->edges())
         if (!e.vertex().marked()) {
           stack.push(e.vertex_itr());
           e.vertex().mark();
@@ -414,7 +414,7 @@ public:
 
     reset_marks();
   }
-  
+
   void visit_dfs(const std::function<void (const Vertex&)>& visit_func) { visit_dfs(visit_func, m_g.begin()); }
 
   bool existing_way(const VertexTag& a, const VertexTag& b) {
@@ -433,7 +433,7 @@ public:
     try {
       visit_dfs([&b](auto& v){ if (v == *b) throw std::exception(); }, a);
     } catch (const std::exception& e) { return true; }
-    
+
     return false;
   }
 
@@ -464,7 +464,7 @@ public:
     while (used < m_g.size() && !heap.empty()) { // O(n^2logn)
       min_edge = get_min_dijkstra(heap);
 
-      min_edge.vertex().mark(); 
+      min_edge.vertex().mark();
       ++used;
 
       for (VertexItr ii = m_g.begin(); ii != m_g.end(); ++ii) { // O(nlogn)
@@ -476,13 +476,13 @@ public:
           tmp = distances.find(Edge(ii)); // O(logn)
 
           if (tmp != distances.end()) {
-            tmp->set_tag(std::min(tmp->get_tag(), min_edge.get_tag() + from_min->get_tag())); 
+            tmp->set_tag(std::min(tmp->get_tag(), min_edge.get_tag() + from_min->get_tag()));
             heap.add(*tmp); // O(1)
           } else {
-            auto r = distances.emplace(from_min->vertex_itr(), min_edge.get_tag() + from_min->get_tag()); 
+            auto r = distances.emplace(from_min->vertex_itr(), min_edge.get_tag() + from_min->get_tag());
             heap.add(*std::get<0>(r)); // O(1)
           }
-        } 
+        }
       }
     }
 
@@ -507,7 +507,7 @@ public:
         auto b = mst.add_vertex(min_edge.beg().get_data());
         auto e = mst.add_vertex(min_edge.end().get_data());
         mst.add_edge(std::get<0>(b), std::get<0>(e), min_edge.get_tag());
-      } 
+      }
     }
 
     return mst;
@@ -558,7 +558,7 @@ public:
     GVTool gv;
     if constexpr (type == DIRECTED)
       gv.createGraph("G", Agdirected);
-    else 
+    else
       gv.createGraph("G", Agundirected);
 
     gv.defAttr(AGNODE, "shape", "circle");
@@ -606,8 +606,8 @@ private:
 
     Edge temp;
     while (!h.empty()) {
-      temp = h.getMin();
-      h.removeTop();
+      temp = h.get_top();
+      h.remove_top();
       if (!temp.vertex().marked()) return temp;
     }
 
